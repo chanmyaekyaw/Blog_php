@@ -31,7 +31,7 @@ if ($_POST) {
 }
 
 
-include('header.html');
+include('header.php');
  ?>
 
 

@@ -33,7 +33,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
     </ul>
 
     <!-- SEARCH FORM -->
-    <form class="form-inline ml-3" method="post" action="index.php">
+
+    <?php
+    //search function ko use yin khwel thi xay chin lo!
+      $link = $_SERVER['PHP_SELF']; //path ko u tr
+      $link_array = explode('/',$link); //path / twy ko array pygg tr
+      $page = end($link_array); //path yk nouk sone name ko pl u tr
+     ?>
+
+    <form class="form-inline ml-3" method="post" action="<?php echo $page == 'index.php' ? 'index.php':'user_list.php'; ?>">
       <div class="input-group input-group-sm">
         <input name="search" class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
         <div class="input-group-append">
@@ -79,6 +87,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
               <i class="nav-icon fas fa-th"></i>
               <p>
                 Blogs
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="user_list.php" class="nav-link">
+              <i class="nav-icon fas fa-user"></i>
+              <p>
+                Users
               </p>
             </a>
           </li>

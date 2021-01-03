@@ -11,14 +11,20 @@ $stmt->execute();
 $result = $stmt->fetchAll();
 
 $blogId = $_GET['id'];
+
 $stmtcmt = $pdo->prepare("SELECT * FROM comments WHERE post_id=$blogId");
 $stmtcmt->execute();
 $cmResult = $stmtcmt->fetchAll();
 
-$authorId = $cmResult[0]['author_id'];
-$stmtau = $pdo->prepare("SELECT * FROM users WHERE id=$authorId");
-$stmtau->execute();
-$auResult = $stmtau->fetchAll();
+$auResult = [];
+if ($cmResult) {
+  foreach ($cmResult as $key => $value) {
+    $authorId = $cmResult[$key]['author_id'];
+    $stmtau = $pdo->prepare("SELECT * FROM users WHERE id=$authorId");
+    $stmtau->execute();
+    $auResult[] = $stmtau->fetchAll();
+  }
+}
 
 if ($_POST)
 {
@@ -38,7 +44,7 @@ if ($_POST)
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>AdminLTE 3 | Widgets</title>
+  <title>Blog Details</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Font Awesome -->
@@ -74,23 +80,33 @@ if ($_POST)
               <br><br>
               <p><?php echo $result[0]['content'] ?></p><hr>
               <h3>Comments</h3>
-              <a href="/blog" type="button" class="btn btn-default">Go Back</a>
+
             </div>
             <!-- /.card-body -->
             <div class="card-footer card-comments">
               <div class="card-comment">
 
-                <div class="comment-text" style="margin-left:0px !important">
-                  <span class="username">
-                  <?php echo $auResult[0]['name']; ?>
-                    <span class="text-muted float-right"><?php echo $cmResult[0]['created_at']; ?></span>
-                  </span><!-- /.username -->
-                  <?php echo $cmResult[0]['content']; ?>
-                </div>
+                <?php
+                  if ($cmResult) { ?>
+                    <?php
+                    foreach ($cmResult as $key => $value) { ?>
+                      <div class="comment-text" style="margin-left:0px !important">
+                        <span class="username">
+                        <?php print_r($auResult[$key][0]['name']); ?>   <!-- Noted!!array ka 2 htet -->
+                          <span class="text-muted float-right"><?php echo $value['created_at']; ?></span>
+                        </span><!-- /.username -->
+                        <?php echo $value['content']; ?>
+                      </div>
+                  <?php  }
+                     ?>
+
+                <?php  }
+                 ?>
                 <!-- /.comment-text -->
               </div>
               <!-- /.card-comment -->
             </div>
+
             <!-- /.card-footer -->
             <div class="card-footer">
               <form action="" method="post">
@@ -108,6 +124,8 @@ if ($_POST)
 
       </div>
       <!-- /.row -->
+      <a href="/blog" type="button" class="btn btn-default mb-2">Go Back</a>
+
     </section>
     <!-- /.content -->
 
